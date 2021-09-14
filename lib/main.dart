@@ -8,7 +8,7 @@ class FormularioTransferencia extends StatelessWidget {
   final TextEditingController _controladorCampoValor = TextEditingController();
 
   @override
-  Widget build(BuildContext buildContext) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('criando transferencia'),
@@ -26,18 +26,20 @@ class FormularioTransferencia extends StatelessWidget {
               icone: Icons.monetization_on),
           ElevatedButton(
             child: Text('Confirmar'),
-            onPressed: () => _criarTransferencia(),
+            onPressed: () => _criarTransferencia(context),
           ),
         ],
       ),
     );
   }
 
-  void _criarTransferencia() {
+  void _criarTransferencia(BuildContext context) {
     final int? numeroConta = int.tryParse(_controladorCampoNumeroConta.text);
     final double? valor = double.tryParse(_controladorCampoValor.text);
     if (numeroConta != null && valor != null) {
-      final tranferenciaCriada = Transferencia(valor, numeroConta);
+      final transferenciaCriada = Transferencia(valor, numeroConta);
+      debugPrint('criar transferencia');
+      Navigator.pop(context, transferenciaCriada);
     }
   }
 }
@@ -47,7 +49,7 @@ class BytebankApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return (MaterialApp(
       home: Scaffold(
-        body: FormularioTransferencia(),
+        body: ListaTransferencias(),
       ),
     ));
   }
@@ -97,7 +99,16 @@ class ListaTransferencias extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          final Future<Transferencia?> future =
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return FormularioTransferencia();
+          }));
+          future.then((transferenciaRecebida) {
+            debugPrint('chegou no then');
+            debugPrint('$transferenciaRecebida');
+          });
+        },
       ),
     );
   }
