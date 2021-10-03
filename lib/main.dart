@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(BytebankApp());
 
-class FormularioTransferencia extends StatelessWidget {
+class FormularioTransferencia extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return FormularioTransferenciaState();
+  }
+}
+
+class FormularioTransferenciaState extends State<FormularioTransferencia> {
   final TextEditingController _controladorCampoNumeroConta =
       TextEditingController();
   final TextEditingController _controladorCampoValor = TextEditingController();
@@ -13,8 +20,8 @@ class FormularioTransferencia extends StatelessWidget {
       appBar: AppBar(
         title: Text('criando transferencia'),
       ),
-      body: Column(
-        children: <Widget>[
+      body: SingleChildScrollView(
+        child: Column(children: <Widget>[
           Editor(
               controlador: _controladorCampoNumeroConta,
               dica: '000',
@@ -28,7 +35,7 @@ class FormularioTransferencia extends StatelessWidget {
             child: Text('Confirmar'),
             onPressed: () => _criarTransferencia(context),
           ),
-        ],
+        ]),
       ),
     );
   }
@@ -48,9 +55,13 @@ class BytebankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (MaterialApp(
-      home: Scaffold(
-        body: ListaTransferencias(),
-      ),
+      theme: ThemeData(
+          primaryColor: Colors.green[900],
+          accentColor: Colors.blueAccent[700],
+          buttonTheme: ButtonThemeData(
+              buttonColor: Colors.blueAccent[700],
+              textTheme: ButtonTextTheme.primary)),
+      home: ListaTransferencias(),
     ));
   }
 }
@@ -122,9 +133,13 @@ class ListaTransferenciaState extends State<ListaTransferencias> {
           }
 
           future.then((transferenciaRecebida) {
-            debugPrint('chegou no then');
-            debugPrint('$transferenciaRecebida');
-            _atualiza(transferenciaRecebida);
+            Future.delayed(Duration(seconds: 1), () {
+              debugPrint('chegou no then');
+              debugPrint('$transferenciaRecebida');
+              if (transferenciaRecebida != null) {
+                _atualiza(transferenciaRecebida);
+              }
+            });
           });
         },
       ),
